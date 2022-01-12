@@ -37,7 +37,7 @@ static ssize_t led_write(struct file* filp, const char* buf, size_t count, loff_
 
         return 1; //読み込んだ文字数を返す（この場合はダミーの1）
 }
-
+/*
 static ssize_t sushi_read(struct file* filp, char* buf, size_t count, loff_t* pos){
         int size = 0;
         char sushi[] = {0xF0, 0x9F, 0x8D, 0xA3, 0x0A}; //寿司の絵文字のバイナリ
@@ -47,12 +47,12 @@ static ssize_t sushi_read(struct file* filp, char* buf, size_t count, loff_t* po
         }
         size += sizeof(sushi);
         return size;
-}
+}*/
 
 static struct file_operations led_fops = { //挙動を書いた関数のポインタを格納する構造体
         .owner = THIS_MODULE,
-        .write = led_write,
-        .read = sushi_read
+        .write = led_write
+//	.read = sushi_read
 };
 
 static int __init init_mod(void){ //カーネルモジュールの初期化
