@@ -30,9 +30,13 @@ static ssize_t led_write(struct file* filp, const char* buf, size_t count, loff_
         printk(KERN_INFO "receive %c\n",c);
 
 	if(c == '0'){
-		gpio_base[10] = 1 << 25;
+		gpio_base[10] = 1 << 24; //LED1を消す
 	}else if(c == '1'){
-		gpio_base[7] = 1 << 25;
+		gpio_base[7] = 1 << 24; //LED1をつける
+	}else if(c =='2'){
+		gpio_base[10] = 1 << 25; //LED2を消す
+	}else if(c == '3'){
+		gpio_base[7] = 1 << 25; //LED2をつける
 	}
 
         return 1; //読み込んだ文字数を返す（この場合はダミーの1）
@@ -79,11 +83,16 @@ static int __init init_mod(void){ //カーネルモジュールの初期化
         
 	gpio_base = ioremap_nocache(0x3f200000, 0xA0); //GPIOのレジスタの最初のアドレス
 	
-	const u32 led = 25; //25番にある
-	const u32 index = led/10; //GPFSEL2
-	const u32 shift = (led%10)*3; //15bit
-	const u32 mask = ~(0x7 << shift); //
-	gpio_base[index] = (gpio_base[index] & mask) | (0x1 << shift); //001:output flag
+	const u32 led1 = 24; //24番にled1がある
+	const u32 led2 = 25; //25番にled2がある
+	const u32 index1 = led1/10; //GPFSEL2
+	const u32 index2 = led2/10; //GPFSEL2
+	const u32 shift1 = (led1%10)*3; //12bit
+	const u32 shift2 = (led2%10)*3; //15bit
+	const u32 mask1 = ~(0x7 << shift1); //
+	const u32 mask2 = ~(0x7 << shift2); //
+	gpio_base[index1] = (gpio_base[index1] & mask1) | (0x1 << shift1); //001:output flag
+	gpio_base[index2] = (gpio_base[index2] & mask2) | (0x1 << shift2); //001:output flag
 		
 	return 0;
 }
