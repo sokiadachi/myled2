@@ -10,10 +10,14 @@
 #include <linux/uaccess.h>
 #include <linux/io.h>
 
+#define RED 23
+#define GREEN 24
+#define BLUE 25
+
 MODULE_AUTHOR("Soki Adachi"); //作者
 MODULE_DESCRIPTION("driver for LED control"); //何のモジュールか
 MODULE_LICENSE("GPL"); //ライセンス
-MODULE_VERSION("0.0.1"); //バージョン
+MODULE_VERSION("1.0.1"); //バージョン
 
 static dev_t dev;
 static struct cdev cdv; //キャラクタデバイスの情報を格納する構造体
@@ -30,37 +34,37 @@ static ssize_t led_write(struct file* filp, const char* buf, size_t count, loff_
         printk(KERN_INFO "receive %c\n",c);
 
 	if(c == '0'){
-		gpio_base[10] = 1 << 23; //LED1(赤)を消す
-		gpio_base[10] = 1 << 24; //LED2(緑)を消す
-		gpio_base[10] = 1 << 25; //LED3(青)を消す
+		gpio_base[10] = 1 << RED; //LED1(赤)を消す
+		gpio_base[10] = 1 << GREEN; //LED2(緑)を消す
+		gpio_base[10] = 1 << BLUE; //LED3(青)を消す
 	}else if(c == 'R'){
-		gpio_base[7] = 1 << 23; //LED1()をつける
-		gpio_base[10] = 1 << 24; //LED2()を消す
-		gpio_base[10] = 1 << 25; //LED3()を消す
+		gpio_base[7] = 1 << RED; //LED1()をつける
+		gpio_base[10] = 1 << GREEN; //LED2()を消す
+		gpio_base[10] = 1 << BLUE; //LED3()を消す
 	}else if(c == 'G'){
-		gpio_base[10] = 1 << 23; //LED1()を消す
-		gpio_base[7] = 1 << 24; //LED2()をつける
-		gpio_base[10] = 1 << 25; //LED3()を消す
+		gpio_base[10] = 1 << RED; //LED1()を消す
+		gpio_base[7] = 1 << GREEN; //LED2()をつける
+		gpio_base[10] = 1 << BLUE; //LED3()を消す
 	}else if(c == 'B'){
-		gpio_base[10] = 1 << 23; //LED1()を消す
-		gpio_base[10] = 1 << 24; //LED2()を消す
-		gpio_base[7] = 1 << 25; //LED3()をつける
+		gpio_base[10] = 1 << RED; //LED1()を消す
+		gpio_base[10] = 1 << GREEN; //LED2()を消す
+		gpio_base[7] = 1 << BLUE; //LED3()をつける
 	}else if(c == 'Y'){
-		gpio_base[7] = 1 << 23; //LED1()をつける
-		gpio_base[7] = 1 << 24; //LED2()をつける
-		gpio_base[10] = 1 << 25; //LED3()を消す
+		gpio_base[7] = 1 << RED; //LED1()をつける
+		gpio_base[7] = 1 << GREEN; //LED2()をつける
+		gpio_base[10] = 1 << BLUE; //LED3()を消す
 	}else if(c == 'M'){
-		gpio_base[10] = 1 << 23; //LED1()を消す
-		gpio_base[7] = 1 << 24; //LED2()をつける
-		gpio_base[7] = 1 << 25; //LED3()をつける
+		gpio_base[10] = 1 << RED; //LED1()を消す
+		gpio_base[7] = 1 << GREEN; //LED2()をつける
+		gpio_base[7] = 1 << BLUE; //LED3()をつける
 	}else if(c == 'P'){
-		gpio_base[7] = 1 << 23; //LED1()をつける
-		gpio_base[10] = 1 << 24; //LED2()を消す
-		gpio_base[7] = 1 << 25; //LED3()をつける
+		gpio_base[7] = 1 << RED; //LED1()をつける
+		gpio_base[10] = 1 << GREEN; //LED2()を消す
+		gpio_base[7] = 1 << BLUE; //LED3()をつける
 	}else if(c == 'W'){
-		gpio_base[7] = 1 << 23; //LED1(赤)をつける
-		gpio_base[7] = 1 << 24; //LED2(緑)をつける
-		gpio_base[7] = 1 << 25; //LED3(青)をつける
+		gpio_base[7] = 1 << RED; //LED1(赤)をつける
+		gpio_base[7] = 1 << GREEN; //LED2(緑)をつける
+		gpio_base[7] = 1 << BLUE; //LED3(青)をつける
 	}
 
         return 1; //読み込んだ文字数を返す（この場合はダミーの1）
@@ -107,9 +111,9 @@ static int __init init_mod(void){ //カーネルモジュールの初期化
         
 	gpio_base = ioremap_nocache(0x3f200000, 0xA0); //GPIOのレジスタの最初のアドレス
 	
-	const u32 led1 = 23; //23番にLED1(赤)がある
-	const u32 led2 = 24; //24番にLED2(緑)がある
-	const u32 led3 = 25; //25番にLED3(青)がある
+	const u32 led1 = RED; //LED1(赤)
+	const u32 led2 = GREEN; //LED2(緑)
+	const u32 led3 = BLUE; //LED3(青)
 	const u32 index1 = led1/10; //GPFSEL2
 	const u32 index2 = led2/10; //GPFSEL2
 	const u32 index3 = led3/10; //GPFSEL2
